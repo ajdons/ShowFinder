@@ -187,7 +187,14 @@ function init() {
 }
 
 function spotifyLogin() {
-  alert("hello");
+  var client_id = '39474be678754f298dee643a3dc0a31d';
+  var scopes = 'user-library-read';
+  var redirect_uri = 'http://ajdons.github.io/ShowFinder/#';
+  var url = 'https://accounts.spotify.com/authorize?client_id=' + client_id +
+        '&response_type=token' +
+        '&scope=user-library-read' +
+        '&redirect_uri=' + encodeURIComponent(redirect_uri);
+    var w = window.open(url, 'asdf', 'WIDTH=400,HEIGHT=500');
 }
 $(document).ready(
   function() {
