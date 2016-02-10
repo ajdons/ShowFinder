@@ -104,7 +104,7 @@
                 <div class="col-lg-8 col-lg-offset-2">
                     <h2>Find Shows Near You</h2>
                     <p>Log in to Spotify to start.</p>
-                    <a id="login" class="btn btn-default btn-lg"> <span class="network-name">Log In</span></a>
+                    <a id="login" class="btn btn-default btn-lg"><i class="fa fa-spotify fa-fw"></i> <span class="network-name">Log In</span></a>
                 </div>
             </div>
         </div>
@@ -143,18 +143,6 @@
         </div>
     </footer>
 
-    <script>
-    function spotifyLogin() {
-      alert("hello");
-    }
-    $(document).ready(
-      function() {
-          $("#login").on('click', function() {
-              spotifyLogin();
-          });
-      }
-    );
-    </script>
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
 
@@ -169,6 +157,20 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="js/grayscale.js"></script>
+
+    <!-- Other JavaScript stuff -->
+    <script>
+    function spotifyLogin() {
+      alert("hello");
+    }
+    $(document).ready(
+      function() {
+          $("#login").on('click', function() {
+              spotifyLogin();
+          });
+      }
+    );
+    </script>
 
 </body>
 
