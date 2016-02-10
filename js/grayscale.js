@@ -204,7 +204,7 @@ $(document).ready(
 
       $('a').on('click', function(event){
         var url = $(this).attr('href');
-        if(url.indexOf("callback") > -1)){
+        if(url.indexOf("callback") > -1){
           event.preventDefault();
           alert(url);
         }
