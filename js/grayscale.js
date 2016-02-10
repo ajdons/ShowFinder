@@ -189,7 +189,7 @@ function init() {
 function spotifyLogin() {
   var client_id = '39474be678754f298dee643a3dc0a31d';
   var scopes = 'user-library-read';
-  var redirect_uri = 'http://www.callback.com/';
+  var redirect_uri = 'http://ajdons.github.io/ShowFinder/callback';
   var url = 'https://accounts.spotify.com/authorize?client_id=' + client_id +
         '&response_type=token' +
         '&scope=user-library-read' +
