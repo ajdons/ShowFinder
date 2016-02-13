@@ -226,7 +226,7 @@ $(function () {
       });
     } else {
 
-      var authUrl = AUTHORIZATION_ENDPOINT + '?client_id=' + client_id +
+      var authUrl = AUTHORIZATION_ENDPOINT + '?client_id=' + CLIENT_ID +
             '&response_type=token' +
             '&scope=user-library-read' +
             '&redirect_uri=' + window.location;
