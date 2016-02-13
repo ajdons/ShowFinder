@@ -208,9 +208,7 @@ $(function () {
 
     var token = extractToken(document.location.hash);
     if (token) {
-      $('div.authenticated').show();
-
-      $('span.token').text(token);
+      alert(token);
 
       $.ajax({
           url: RESOURCE_ENDPOINT
@@ -218,7 +216,7 @@ $(function () {
             xhr.setRequestHeader('Authorization', "Bearer " + token);
           }
         , success: function (response) {
-            var container = $('span.user');
+
             if (response) {
               alert(response.display_name);
             } else {
