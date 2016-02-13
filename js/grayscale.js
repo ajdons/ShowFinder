@@ -196,18 +196,58 @@ function spotifyLogin() {
         '&redirect_uri=' + encodeURIComponent(redirect_uri);
     var w = window.open(url, 'asdf', 'WIDTH=400,HEIGHT=500');
 }
-$(document).ready(
-  function() {
-      $("#login").on('click', function() {
-          spotifyLogin();
-      });
+$(function () {
+    var extractToken = function(hash) {
+      var match = hash.match(/access_token=([\w-]+)/);
+      return !!match && match[1];
+    };
 
-      $('a').on('click', function(event){
-        var url = $(this).attr('href');
-        if(url.indexOf("callback") > -1){
-          event.preventDefault();
-          alert(url);
-        }
+    var CLIENT_ID = 'e3805252f21a42ff8331d509ba4faaea';
+    var AUTHORIZATION_ENDPOINT = "https://accounts.spotify.com/authorize";
+    var RESOURCE_ENDPOINT = "https://api.spotify.com/v1/me";
+
+    var token = extractToken(document.location.hash);
+    if (token) {
+      $('div.authenticated').show();
+
+      $('span.token').text(token);
+
+      $.ajax({
+          url: RESOURCE_ENDPOINT
+        , beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', "Bearer " + token);
+          }
+        , success: function (response) {
+            var container = $('span.user');
+            if (response) {
+              alert(response.display_name);
+            } else {
+              alert("An error occurred.");
+            }
+          }
       });
-  }
-);
+    } else {
+
+      var authUrl = AUTHORIZATION_ENDPOINT + '?client_id=' + client_id +
+            '&response_type=token' +
+            '&scope=user-library-read' +
+            '&redirect_uri=' + window.location;
+
+      $("#login").attr("href", authUrl);
+    }
+  });
+// $(document).ready(
+//   function() {
+//       $("#login").on('click', function() {
+//           spotifyLogin();
+//       });
+//
+//       $('a').on('click', function(event){
+//         var url = $(this).attr('href');
+//         if(url.indexOf("callback") > -1){
+//           event.preventDefault();
+//           alert(url);
+//         }
+//       });
+//   }
+// );
