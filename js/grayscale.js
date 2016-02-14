@@ -217,7 +217,8 @@ $(function () {
         , success: function (response) {
           var container = $('span.response');
             if (response) {
-              container.text(response.toSource());
+              var json = JSON.parse(response);
+              container.text(json);
             } else {
               alert("An error occurred.");
             }
