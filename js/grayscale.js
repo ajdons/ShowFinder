@@ -210,6 +210,7 @@ $(function () {
     if (token) {
 
       $.ajax({
+          dataType: 'json',
           url: RESOURCE_ENDPOINT
         , beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', "Bearer " + token);
@@ -217,8 +218,7 @@ $(function () {
         , success: function (response) {
           var container = $('span.response');
             if (response) {
-              var json = JSON.parse(response);
-              container.text(json);
+              container.text(response.items);
             } else {
               alert("An error occurred.");
             }
