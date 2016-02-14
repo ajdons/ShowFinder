@@ -218,7 +218,7 @@ $(function () {
         , success: function (response) {
           var container = $('span.response');
             if (response) {
-              alert(response);
+              alert(response.href);
             } else {
               alert("An error occurred.");
             }
