@@ -217,7 +217,7 @@ $(function () {
         , success: function (response) {
           var container = $('span.response');
             if (response) {
-              container.text(response.email);
+              container.text(response.toSource());
             } else {
               alert("An error occurred.");
             }
