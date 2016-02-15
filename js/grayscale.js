@@ -204,7 +204,7 @@ $(function () {
 
     var CLIENT_ID = 'e3805252f21a42ff8331d509ba4faaea';
     var AUTHORIZATION_ENDPOINT = "https://accounts.spotify.com/authorize";
-    var RESOURCE_ENDPOINT = "https://api.spotify.com/v1/me";
+    var RESOURCE_ENDPOINT = "https://api.spotify.com/v1/me/albums";
 
     var token = extractToken(document.location.hash);
     if (token) {
@@ -218,7 +218,7 @@ $(function () {
         , success: function (response) {
           var container = $('span.response');
             if (response) {
-              alert(response.href);
+              container.text(response.items);
             } else {
               alert("An error occurred.");
             }
