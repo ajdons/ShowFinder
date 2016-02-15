@@ -218,7 +218,7 @@ $(function () {
         , success: function (response) {
           var container = $('span.response');
             if (response) {
-              container.text(response.items);
+              container.text(response.items[0].artists[0].name);
             } else {
               alert("An error occurred.");
             }
