@@ -37,12 +37,12 @@ $('.navbar-collapse ul li a').click(function() {
 // Google Maps Scripts
 var map = null;
 // When the window has finished loading create our google map below
-google.maps.event.addDomListener(window, 'load', init);
-google.maps.event.addDomListener(window, 'resize', function() {
-    map.setCenter(new google.maps.LatLng(40.6700, -73.9400));
-});
+google.maps.event.addDomListener(window, 'load', init(0, 0));
+// google.maps.event.addDomListener(window, 'resize', function() {
+//     map.setCenter(new google.maps.LatLng(40.6700, -73.9400));
+// });
 
-function init() {
+function init(lat, lon) {
     // Basic options for a simple Google Map
     // For more options see: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
     var mapOptions = {
@@ -50,7 +50,7 @@ function init() {
         zoom: 15,
 
         // The latitude and longitude to center the map (always required)
-        center: new google.maps.LatLng(40.6700, -73.9400), // New York
+        center: new google.maps.LatLng(lat, lon), // New York
 
         // Disables the default Google Maps UI components
         disableDefaultUI: true,
@@ -178,7 +178,7 @@ function init() {
 
     // Custom Map Marker Icon - Customize the map-marker.png file to customize your icon
     var image = 'img/map-marker.png';
-    var myLatLng = new google.maps.LatLng(40.6700, -73.9400);
+    var myLatLng = new google.maps.LatLng(lat, lon);
     var beachMarker = new google.maps.Marker({
         position: myLatLng,
         map: map,
@@ -186,16 +186,71 @@ function init() {
     });
 }
 
-function spotifyLogin() {
-  var client_id = 'e3805252f21a42ff8331d509ba4faaea';
-  var scopes = 'user-library-read';
-  var redirect_uri = 'http://ajdons.github.io/ShowFinder/callback';
-  var url = 'https://accounts.spotify.com/authorize?client_id=' + client_id +
-        '&response_type=token' +
-        '&scope=user-library-read' +
-        '&redirect_uri=' + encodeURIComponent(redirect_uri);
-    var w = window.open(url, 'asdf', 'WIDTH=400,HEIGHT=500');
+function getLocation () {
+  navigator.geolocation.getCurrentPosition(handle_location_position, handle_location_errors);
 }
+
+function handle_location_errors (error) {
+  switch(error.code) {
+    case error.PERMISSION_DENIED: alert("User denied access to their location.");
+    break;
+
+    case error.POSITION_UNAVAILABLE: alert("Could not detect location at this time.");
+    break;
+
+    case error.TIMEOUT: alert("Request to get location timed out.");
+    break;
+
+    default: alert("An unknown error occured.");
+    break;
+  }
+}
+
+function handle_location_position (position) {
+  var lat = position.coords.latitude;
+  var lon = position.coords.longitude;
+  var metroArea = '';
+  var metroId = '';
+  var API_KEY = '5o9IuVllmAK38SnM';
+  var LOCATION_URL = 'http://api.songkick.com/api/3.0/search/locations.json?location=geo:' + lat + ',' + lon + '&apikey=' + API_KEY;
+
+  google.maps.event.addDomListener(window, 'load', init(lat, lon));
+
+  $.ajax({
+      dataType: 'json',
+      url: LOCATION_URL
+    , success: function (response) {
+        if (response) {
+          var location = response.resultsPage.results.location[0];
+          metroArea = location.metroArea.displayName;
+          metroId = location.metroArea.id;
+          console.log('AREA: ' + metroArea);
+          console.log('ID: ' + metroId);
+          var metroText = "Find shows near " + metroArea;
+          document.getElementById("metroLabel").innerHTML = metroText;
+        } else {
+          alert("An error occurred.");
+        }
+      }
+  });
+  
+}
+
+function loadShows(metroId) {
+  var API_KEY = '5o9IuVllmAK38SnM';
+  var LOCATION_URL = 'http://api.songkick.com/api/3.0/search/locations.json?query=montreal&apikey=' + API_KEY;
+
+  var EVENTS_URL = 'http://api.songkick.com/api/3.0/metro_areas/' + metroId + '/calendar.json?apikey=' + API_KEY;
+
+  $.getJSON(EVENTS_URL), function (response) {
+    console.log(response);
+    $.each(response.resultsPage.results, function (i, event) {
+      console.log(event.displayName);
+    });
+  };
+
+}
+
 $(function () {
     var extractToken = function(hash) {
       var match = hash.match(/access_token=([\w-]+)/);
@@ -204,11 +259,10 @@ $(function () {
 
     var CLIENT_ID = 'e3805252f21a42ff8331d509ba4faaea';
     var AUTHORIZATION_ENDPOINT = "https://accounts.spotify.com/authorize";
-    var RESOURCE_ENDPOINT = "https://api.spotify.com/v1/me/albums";
+    var RESOURCE_ENDPOINT = "https://api.spotify.com/v1/me/albums?limit=50";
 
     var token = extractToken(document.location.hash);
     if (token) {
-
       $.ajax({
           dataType: 'json',
           url: RESOURCE_ENDPOINT
@@ -216,9 +270,16 @@ $(function () {
             xhr.setRequestHeader('Authorization', "Bearer " + token);
           }
         , success: function (response) {
-          var container = $('span.response');
+
             if (response) {
-              container.text(response.total + " albums found.");
+              var body = "";
+              var mySet = new Set();
+
+              $.each(response.items, function (i, item) {
+                mySet.add(item.album.artists[0].name);
+              });
+
+              console.log(body);
             } else {
               alert("An error occurred.");
             }
@@ -234,18 +295,9 @@ $(function () {
       $("#login").attr("href", authUrl);
     }
   });
-// $(document).ready(
-//   function() {
-//       $("#login").on('click', function() {
-//           spotifyLogin();
-//       });
-//
-//       $('a').on('click', function(event){
-//         var url = $(this).attr('href');
-//         if(url.indexOf("callback") > -1){
-//           event.preventDefault();
-//           alert(url);
-//         }
-//       });
-//   }
-// );
+
+$(document).ready(
+  function() {
+      $("#location").click(getLocation);
+  }
+);
