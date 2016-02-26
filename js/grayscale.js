@@ -216,26 +216,23 @@ function handle_location_position (position) {
 
   google.maps.event.addDomListener(window, 'load', init(lat, lon));
 
-  $.ajax({
-      dataType: 'json',
-      url: LOCATION_URL
-    , beforeSend: function (xhr) {
-        xhr.setRequestHeader('Access-Control-Allow-Origin', "*");
-      }
-    , success: function (response) {
-        if (response) {
-          var location = response.resultsPage.results.location[0];
-          metroArea = location.metroArea.displayName;
-          metroId = location.metroArea.id;
-          console.log('AREA: ' + metroArea);
-          console.log('ID: ' + metroId);
-          var metroText = "Find shows near " + metroArea;
-          document.getElementById("metroLabel").innerHTML = metroText;
-        } else {
-          alert("An error occurred.");
-        }
-      }
-  });
+  // $.ajax({
+  //     dataType: 'json',
+  //     url: LOCATION_URL
+  //   , success: function (response) {
+  //       if (response) {
+  //         var location = response.resultsPage.results.location[0];
+  //         metroArea = location.metroArea.displayName;
+  //         metroId = location.metroArea.id;
+  //         console.log('AREA: ' + metroArea);
+  //         console.log('ID: ' + metroId);
+  //         var metroText = "Find shows near " + metroArea;
+  //         document.getElementById("metroLabel").innerHTML = metroText;
+  //       } else {
+  //         alert("An error occurred.");
+  //       }
+  //     }
+  // });
 
 }
 
