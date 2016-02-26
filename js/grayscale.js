@@ -219,6 +219,9 @@ function handle_location_position (position) {
   $.ajax({
       dataType: 'json',
       url: LOCATION_URL
+    , beforeSend: function (xhr) {
+        xhr.setRequestHeader('Access-Control-Allow-Origin', "*");
+      }
     , success: function (response) {
         if (response) {
           var location = response.resultsPage.results.location[0];
@@ -233,7 +236,7 @@ function handle_location_position (position) {
         }
       }
   });
-  
+
 }
 
 function loadShows(metroId) {
