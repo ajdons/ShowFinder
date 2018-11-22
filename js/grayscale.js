@@ -34,158 +34,9 @@ $('.navbar-collapse ul li a').click(function() {
   }
 });
 
-// Google Maps Scripts
-var map = null;
-// When the window has finished loading create our google map below
-google.maps.event.addDomListener(window, 'load', init(0, 0));
-// google.maps.event.addDomListener(window, 'resize', function() {
-//     map.setCenter(new google.maps.LatLng(40.6700, -73.9400));
-// });
-
-function init(lat, lon) {
-    // Basic options for a simple Google Map
-    // For more options see: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
-    var mapOptions = {
-        // How zoomed in you want the map to start at (always required)
-        zoom: 15,
-
-        // The latitude and longitude to center the map (always required)
-        center: new google.maps.LatLng(lat, lon), // New York
-
-        // Disables the default Google Maps UI components
-        disableDefaultUI: true,
-        scrollwheel: false,
-        draggable: false,
-
-        // How you would like to style the map.
-        // This is where you would paste any style found on Snazzy Maps.
-        styles: [{
-            "featureType": "water",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 17
-            }]
-        }, {
-            "featureType": "landscape",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 20
-            }]
-        }, {
-            "featureType": "road.highway",
-            "elementType": "geometry.fill",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 17
-            }]
-        }, {
-            "featureType": "road.highway",
-            "elementType": "geometry.stroke",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 29
-            }, {
-                "weight": 0.2
-            }]
-        }, {
-            "featureType": "road.arterial",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 18
-            }]
-        }, {
-            "featureType": "road.local",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 16
-            }]
-        }, {
-            "featureType": "poi",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 21
-            }]
-        }, {
-            "elementType": "labels.text.stroke",
-            "stylers": [{
-                "visibility": "on"
-            }, {
-                "color": "#000000"
-            }, {
-                "lightness": 16
-            }]
-        }, {
-            "elementType": "labels.text.fill",
-            "stylers": [{
-                "saturation": 36
-            }, {
-                "color": "#000000"
-            }, {
-                "lightness": 40
-            }]
-        }, {
-            "elementType": "labels.icon",
-            "stylers": [{
-                "visibility": "off"
-            }]
-        }, {
-            "featureType": "transit",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 19
-            }]
-        }, {
-            "featureType": "administrative",
-            "elementType": "geometry.fill",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 20
-            }]
-        }, {
-            "featureType": "administrative",
-            "elementType": "geometry.stroke",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 17
-            }, {
-                "weight": 1.2
-            }]
-        }]
-    };
-
-    // Get the HTML DOM element that will contain your map
-    // We are using a div with id="map" seen below in the <body>
-    var mapElement = document.getElementById('map');
-
-    // Create the Google Map using out element and options defined above
-    map = new google.maps.Map(mapElement, mapOptions);
-
-    // Custom Map Marker Icon - Customize the map-marker.png file to customize your icon
-    var image = 'img/map-marker.png';
-    var myLatLng = new google.maps.LatLng(lat, lon);
-    var beachMarker = new google.maps.Marker({
-        position: myLatLng,
-        map: map,
-        icon: image
-    });
-}
-
+var artistSet = new Set();
+var eventSet = new Set();
+var metroId = -1;
 function getLocation () {
   navigator.geolocation.getCurrentPosition(handle_location_position, handle_location_errors);
 }
@@ -210,45 +61,35 @@ function handle_location_position (position) {
   var lat = position.coords.latitude;
   var lon = position.coords.longitude;
   var metroArea = '';
-  var metroId = '';
   var API_KEY = '5o9IuVllmAK38SnM';
   var LOCATION_URL = 'http://api.songkick.com/api/3.0/search/locations.json?location=geo:' + lat + ',' + lon + '&apikey=' + API_KEY;
+  //google.maps.event.addDomListener(window, 'load', init(lat, lon));
 
-  google.maps.event.addDomListener(window, 'load', init(lat, lon));
-
-  // $.ajax({
-  //     dataType: 'json',
-  //     url: LOCATION_URL
-  //   , success: function (response) {
-  //       if (response) {
-  //         var location = response.resultsPage.results.location[0];
-  //         metroArea = location.metroArea.displayName;
-  //         metroId = location.metroArea.id;
-  //         console.log('AREA: ' + metroArea);
-  //         console.log('ID: ' + metroId);
-  //         var metroText = "Find shows near " + metroArea;
-  //         document.getElementById("metroLabel").innerHTML = metroText;
-  //       } else {
-  //         alert("An error occurred.");
-  //       }
-  //     }
-  // });
+  $.ajax({
+      dataType: 'json',
+      url: LOCATION_URL
+    , success: function (response) {
+        if (response) {
+          var location = response.resultsPage.results.location[0];
+          metroArea = location.metroArea.displayName;
+          metroId = location.metroArea.id;
+          console.log('AREA: ' + metroArea);
+          console.log('ID: ' + metroId);
+          var metroText = "Find shows near " + metroArea;
+          document.getElementById("metroLabel").innerHTML = metroText;
+          $('html, body').animate({
+      scrollTop: $("#shows_section").offset().top}, 2000);
+        } else {
+          alert("An error occurred.");
+        }
+      }
+  });
 
 }
 
-function loadShows(metroId) {
-  var API_KEY = '5o9IuVllmAK38SnM';
-  var LOCATION_URL = 'http://api.songkick.com/api/3.0/search/locations.json?query=montreal&apikey=' + API_KEY;
-
-  var EVENTS_URL = 'http://api.songkick.com/api/3.0/metro_areas/' + metroId + '/calendar.json?apikey=' + API_KEY;
-
-  $.getJSON(EVENTS_URL), function (response) {
-    console.log(response);
-    $.each(response.resultsPage.results, function (i, event) {
-      console.log(event.displayName);
-    });
-  };
-
+function loadShows() {
+  console.log("Loading shows...");
+  makeSongkickCall(1);
 }
 
 $(function () {
@@ -259,32 +100,13 @@ $(function () {
 
     var CLIENT_ID = 'e3805252f21a42ff8331d509ba4faaea';
     var AUTHORIZATION_ENDPOINT = "https://accounts.spotify.com/authorize";
-    var RESOURCE_ENDPOINT = "https://api.spotify.com/v1/me/albums?limit=50";
 
     var token = extractToken(document.location.hash);
     if (token) {
-      $.ajax({
-          dataType: 'json',
-          url: RESOURCE_ENDPOINT
-        , beforeSend: function (xhr) {
-            xhr.setRequestHeader('Authorization', "Bearer " + token);
-          }
-        , success: function (response) {
-
-            if (response) {
-              var body = "";
-              var mySet = new Set();
-
-              $.each(response.items, function (i, item) {
-                mySet.add(item.album.artists[0].name);
-              });
-
-              console.log(body);
-            } else {
-              alert("An error occurred.");
-            }
-          }
-      });
+        removeHash();
+        makeSpotifyCall(token, 0);
+        $('html, body').animate({
+    scrollTop: $("#location_section").offset().top}, 2000);
     } else {
 
       var authUrl = AUTHORIZATION_ENDPOINT + '?client_id=' + CLIENT_ID +
@@ -296,8 +118,114 @@ $(function () {
     }
   });
 
+function removeHash () {
+    history.pushState("", document.title, window.location.pathname
+                                                       + window.location.search);
+}
+
+function makeSongkickCall(page) {
+  console.log("making songkick call");
+  var API_KEY = '5o9IuVllmAK38SnM';
+  var EVENTS_URL = 'http://api.songkick.com/api/3.0/metro_areas/' + metroId + '/calendar.json?apikey=' + API_KEY + "&page=" + page;
+  console.log("in makeSongkickCall");
+  console.log(EVENTS_URL);
+  $.ajax({
+      dataType: 'json',
+      url: EVENTS_URL
+    , success: function (response) {
+        if (response) {
+          handleSongkickResponse(response, page);
+        } else {
+          alert("An error occurred.");
+        }
+      }
+  });
+}
+
+function handleSongkickResponse(response, page) {
+  console.log("in handleSongkickResponse");
+  console.log("Page: " + page);
+    if(response.resultsPage.results.event != null) {
+      $.each(response.resultsPage.results.event, function (i, eventObject) {
+        $.each(eventObject.performance, function (i, artist) {
+          if(artistSet.has(artist.displayName)) {
+            eventSet.add(eventObject);
+          }
+        });
+      });
+      //Load max of 10 pages
+      if(page < 10) {
+        makeSongkickCall(page+1);
+      } else {
+        displayEventResults();
+      }
+    }
+    else {
+      displayEventResults();
+    }
+}
+
+function makeSpotifyCall(token, index) {
+  var RESOURCE_ENDPOINT = "https://api.spotify.com/v1/me/tracks?limit=50";
+
+  var limit = 50;
+  var offset = index*limit;
+  $.ajax({
+      dataType: 'json',
+      url: RESOURCE_ENDPOINT + "&offset=" + offset
+    , beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', "Bearer " + token);
+      }
+    // , statusCode: {
+    //      502: function() {
+    //         alert('Error loading your tracks');
+    //      }
+    //    }
+    , error: function (response) {
+      alert('ERROR');
+    }
+    , success: function (response) {
+        if (response) {
+          var body = "";
+          handleSpotifyResponse(response, token, index)
+        } else {
+          alert("An error occurred.");
+        }
+      }
+  });
+}
+
+function handleSpotifyResponse(response, token, index) {
+  if(response.items.length > 0){
+    $.each(response.items, function (i, item) {
+      artistSet.add(item.track.artists[0].name);
+    });
+    console.log(response);
+    makeSpotifyCall(token, index+1);
+  }
+}
+
+function displayEventResults() {
+  $('html, body').animate({
+scrollTop: $("#results_section").offset().top}, 2000);
+let listItem = document.querySelector(".results")
+  console.log("===============================");
+  eventSet.forEach(function(index, eventObject, set) {
+    var artistString = "";
+    $.each(eventObject.performance, function (i, artist) {
+      if(artistSet.has(artist.displayName)) {
+        artistString += artist.displayName + ", ";
+      }
+    });
+    var listValue = document.createElement("li");
+    listValue.textContent = eventObject.displayName;
+    listItem.appendChild(listValue);
+  });
+}
+
 $(document).ready(
   function() {
-      $("#location").click(getLocation);
+    $("#location").click(getLocation);
+    $("#shows").click(loadShows);
   }
 );
