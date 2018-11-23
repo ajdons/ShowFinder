@@ -38,7 +38,12 @@ var artistSet = new Set();
 var eventSet = new Set();
 var metroId = -1;
 function getLocation () {
-  navigator.geolocation.getCurrentPosition(handle_location_position, handle_location_errors);
+  jQuery.post( "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDoCUgILfrHRQ2-C6hlxfeWs9PM-v-fxbI", function(success) {
+		handleLocationSuccess({coords: {latitude: success.location.lat, longitude: success.location.lng}});
+  })
+  .fail(function(err) {
+    console.log("API Geolocation error! \n\n"+err);
+  });
 }
 
 function handle_location_errors (error) {
@@ -57,7 +62,7 @@ function handle_location_errors (error) {
   }
 }
 
-function handle_location_position (position) {
+function handleLocationSuccess (position) {
   var lat = position.coords.latitude;
   var lon = position.coords.longitude;
   var metroArea = '';
