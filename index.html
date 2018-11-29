@@ -22,13 +22,6 @@
     <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
 </head>
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
@@ -53,10 +46,10 @@
                         <a href="#page-top"></a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#tryitout">Try It Out</a>
+                        <a class="page-scroll" href="#tryitout_section">Try It Out</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#contact">Contact</a>
+                        <a class="page-scroll" href="#contact_section">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -73,7 +66,7 @@
                     <div class="col-md-8 col-md-offset-2">
                         <h1 class="brand-heading"><span class="light">Show</span>Finder</h1>
                         <p class="intro-text">Find upcoming shows in your area based on the music you listen to.</p>
-                        <a href="#tryitout" class="btn btn-circle page-scroll">
+                        <a href="#tryitout_section" class="btn btn-circle page-scroll">
                             <i class="fa fa-angle-double-down animated"></i>
                         </a>
                     </div>
@@ -83,7 +76,7 @@
     </header>
 
     <!-- Try it out Section -->
-    <section id="tryitout" class="content-section text-center">
+    <section id="tryitout_section" class="content-section text-center">
         <div class="download-section">
             <div class="container">
                 <div class="col-lg-8 col-lg-offset-2">
@@ -100,7 +93,7 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
                 <h2>Location</h2>
-                <p>Let us access your location. Give us a few seconds to match you with your closest city.</p>
+                <p>Give us a few seconds to match you with your closest city.</p>
                 <a id="location" class="btn btn-default btn-lg"><i class="fa fa-map-marker fa-fw"></i> <span class="network-name">Get Location</span></a>
             </div>
         </div>
@@ -129,7 +122,7 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="container content-section text-center">
+    <section id="contact_section" class="container content-section text-center">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
                 <h2>Contact</h2>
@@ -155,6 +148,22 @@
         </div>
     </footer>
 
+    <div class="modal" id="loadingDialog" data-backdrop="static" data-keyboard="false" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content modal-dark">
+                <div class="modal-header modal-dark">
+                    <h4 id="progressMessage" class="modal-title">Loading your artists...</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+                      <div id="ariaProgress" class="progress-bar progress-bar-success progress-bar-striped progress-bar-orange active" role="progressbar"
+                       aria-valuemin="0" style="width:0%; height: 40px">
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
 

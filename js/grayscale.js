@@ -68,7 +68,6 @@ function handleLocationSuccess (position) {
   var metroArea = '';
   var API_KEY = '5o9IuVllmAK38SnM';
   var LOCATION_URL = 'http://api.songkick.com/api/3.0/search/locations.json?location=geo:' + lat + ',' + lon + '&apikey=' + API_KEY;
-  //google.maps.event.addDomListener(window, 'load', init(lat, lon));
 
   $.ajax({
       dataType: 'json',
@@ -93,7 +92,7 @@ function handleLocationSuccess (position) {
 }
 
 function loadShows() {
-  console.log("Loading shows...");
+  showLoadingDialog("Finding shows in your area");
   makeSongkickCall(1);
 }
 
@@ -110,8 +109,8 @@ $(function () {
     if (token) {
         removeHash();
         makeSpotifyCall(token, 0);
-        $('html, body').animate({
-    scrollTop: $("#location_section").offset().top}, 2000);
+        $('html, body').animate({scrollTop: $("#location_section").offset().top}, 2000);
+        showLoadingDialog();
     } else {
 
       var authUrl = AUTHORIZATION_ENDPOINT + '?client_id=' + CLIENT_ID +
@@ -129,11 +128,8 @@ function removeHash () {
 }
 
 function makeSongkickCall(page) {
-  console.log("making songkick call");
   var API_KEY = '5o9IuVllmAK38SnM';
   var EVENTS_URL = 'http://api.songkick.com/api/3.0/metro_areas/' + metroId + '/calendar.json?apikey=' + API_KEY + "&page=" + page;
-  console.log("in makeSongkickCall");
-  console.log(EVENTS_URL);
   $.ajax({
       dataType: 'json',
       url: EVENTS_URL
@@ -148,8 +144,6 @@ function makeSongkickCall(page) {
 }
 
 function handleSongkickResponse(response, page) {
-  console.log("in handleSongkickResponse");
-  console.log("Page: " + page);
     if(response.resultsPage.results.event != null) {
       $.each(response.resultsPage.results.event, function (i, eventObject) {
         $.each(eventObject.performance, function (i, artist) {
@@ -158,6 +152,7 @@ function handleSongkickResponse(response, page) {
           }
         });
       });
+      setProgress(0, 100, ((page + 1) /10) * 100);
       //Load max of 10 pages
       if(page < 10) {
         makeSongkickCall(page+1);
@@ -202,19 +197,25 @@ function makeSpotifyCall(token, index) {
 
 function handleSpotifyResponse(response, token, index) {
   if(response.items.length > 0){
+    var test;
     $.each(response.items, function (i, item) {
       artistSet.add(item.track.artists[0].name);
+      if (!test)
+        test=item.track.artists[0].name;
     });
-    console.log(response);
+    setProgress(0, 100, (response.offset + 50)/response.total * 100);
+
     makeSpotifyCall(token, index+1);
+  } else {
+    hideLoadingDialog();
   }
 }
 
 function displayEventResults() {
   $('html, body').animate({
 scrollTop: $("#results_section").offset().top}, 2000);
+hideLoadingDialog();
 let listItem = document.querySelector(".results")
-  console.log("===============================");
   eventSet.forEach(function(index, eventObject, set) {
     var artistString = "";
     $.each(eventObject.performance, function (i, artist) {
@@ -226,6 +227,28 @@ let listItem = document.querySelector(".results")
     listValue.textContent = eventObject.displayName;
     listItem.appendChild(listValue);
   });
+}
+
+/**
+ * Displays overlay with "Please wait" text. Based on bootstrap modal. Contains animated progress bar.
+ */
+function showLoadingDialog(message) {
+    $("#progressMessage").text(message);
+    $("#loadingDialog").modal("show");
+}
+
+function setProgress(min, max, current) {
+  $('#ariaProgress').attr('aria-valuemin', min);
+  $('#ariaProgress').attr('aria-valuemax', max);
+  $('#ariaProgress').attr('aria-valuenow', current).css('width', current + "%");
+}
+
+/**
+ * Hides "Please wait" overlay. See function showPleaseWait().
+ */
+function hideLoadingDialog() {
+    $("#loadingDialog").modal("hide");
+    setProgress(0, 100, 0);
 }
 
 $(document).ready(

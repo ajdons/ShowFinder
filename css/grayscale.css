@@ -257,6 +257,18 @@ a:focus {
     }
 }
 
+.dark {
+  color: #000;
+}
+
+.modal-dark {
+  background-color: #212121;
+}
+
+.progress-bar-orange {
+      background-color: #ff3100 !important;
+}
+
 .content-section {
     padding-top: 100px;
 }
