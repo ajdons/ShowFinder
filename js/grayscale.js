@@ -43,8 +43,11 @@ function getLocation () {
   })
   .fail(function(err) {
     console.log("API Geolocation error! \n\n"+err);
-    handleLocationSuccess({coords: {latitude: 45.508888, longitude: -73.561668}});
-  });
+    var metroText = "Find shows near Montréal";
+    document.getElementById("metroLabel").innerHTML = metroText;
+    $('html, body').animate({
+      scrollTop: $("#shows_section").offset().top}, 2000);
+    });
 }
 
 function handle_location_errors (error) {
