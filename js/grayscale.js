@@ -75,7 +75,7 @@ function handleLocationSuccess (position) {
       url: LOCATION_URL
     , success: function (response) {
         if (response) {
-          var location = response.resultsPage.results.location[1];
+          var location = response.resultsPage.results.location[0];
           metroArea = location.metroArea.displayName;
           metroId = location.metroArea.id;
           console.log('AREA: ' + metroArea);
