@@ -36,13 +36,14 @@ $('.navbar-collapse ul li a').click(function() {
 
 var artistSet = new Set();
 var eventSet = new Set();
-var metroId = -1;
+var metroId = 27377;
 function getLocation () {
   jQuery.post( "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDoCUgILfrHRQ2-C6hlxfeWs9PM-v-fxbI", function(success) {
 		handleLocationSuccess({coords: {latitude: success.location.lat, longitude: success.location.lng}});
   })
   .fail(function(err) {
     console.log("API Geolocation error! \n\n"+err);
+    handleLocationSuccess({coords: {latitude: 45.508888, longitude: -73.561668}});
   });
 }
 
@@ -74,7 +75,7 @@ function handleLocationSuccess (position) {
       url: LOCATION_URL
     , success: function (response) {
         if (response) {
-          var location = response.resultsPage.results.location[0];
+          var location = response.resultsPage.results.location[1];
           metroArea = location.metroArea.displayName;
           metroId = location.metroArea.id;
           console.log('AREA: ' + metroArea);
@@ -104,11 +105,12 @@ $(function () {
 
     var CLIENT_ID = 'e3805252f21a42ff8331d509ba4faaea';
     var AUTHORIZATION_ENDPOINT = "https://accounts.spotify.com/authorize";
+    var RESOURCE_ENDPOINT = "https://api.spotify.com/v1/me/tracks?limit=50";
 
     var token = extractToken(document.location.hash);
     if (token) {
         removeHash();
-        makeSpotifyCall(token, 0);
+        makeSpotifyCall(token, RESOURCE_ENDPOINT);
         $('html, body').animate({scrollTop: $("#location_section").offset().top}, 2000);
         showLoadingDialog();
     } else {
@@ -165,14 +167,10 @@ function handleSongkickResponse(response, page) {
     }
 }
 
-function makeSpotifyCall(token, index) {
-  var RESOURCE_ENDPOINT = "https://api.spotify.com/v1/me/tracks?limit=50";
-
-  var limit = 50;
-  var offset = index*limit;
+function makeSpotifyCall(token, url) {
   $.ajax({
       dataType: 'json',
-      url: RESOURCE_ENDPOINT + "&offset=" + offset
+      url: url
     , beforeSend: function (xhr) {
         xhr.setRequestHeader('Authorization', "Bearer " + token);
       }
@@ -186,8 +184,7 @@ function makeSpotifyCall(token, index) {
     }
     , success: function (response) {
         if (response) {
-          var body = "";
-          handleSpotifyResponse(response, token, index)
+          handleSpotifyResponse(response, token)
         } else {
           alert("An error occurred.");
         }
@@ -195,17 +192,17 @@ function makeSpotifyCall(token, index) {
   });
 }
 
-function handleSpotifyResponse(response, token, index) {
-  if(response.items.length > 0){
-    var test;
+function handleSpotifyResponse(response, token) {
+  if (response.items.length > 0){
     $.each(response.items, function (i, item) {
       artistSet.add(item.track.artists[0].name);
-      if (!test)
-        test=item.track.artists[0].name;
     });
     setProgress(0, 100, (response.offset + 50)/response.total * 100);
-
-    makeSpotifyCall(token, index+1);
+    if (response.next) {
+      makeSpotifyCall(token, response.next);
+    } else {
+      hideLoadingDialog();
+    }
   } else {
     hideLoadingDialog();
   }
